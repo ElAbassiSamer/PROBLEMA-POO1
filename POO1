@@ -1,0 +1,164 @@
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+ifstream f("date.in");
+ofstream g("date.out");
+class multime
+{
+    public:
+    int v[100],n;
+    friend ostream & operator<<( ostream & out, const multime &m );
+    friend istream & operator>>( istream  & in, multime &m );
+    friend multime operator+(const multime &m1,const multime &m2);
+    friend multime operator*(const multime &m1,const multime &m2);
+    friend multime operator-(const multime &m1,const multime &m2);
+    void construire_multime(int v[100],int &n)
+    {
+        for (int i=0;i<n-1;i++)
+            for (int j=i+1;j<n;j++)
+                if (v[i]==v[j])
+                    {for (int x=j;x<n;x++)
+                        v[x]=v[x+1];
+                     n--;}
+    }
+
+};
+multime operator +(const multime &m1,const multime &m2)
+{   multime m3;
+    int k=0;
+    for (int i=0;i<m1.n;i++)
+        m3.v[k++]=m1.v[i];
+    for (int i=0;i<m2.n;i++)
+        m3.v[k++]=m2.v[i];
+    m3.n=k;
+    m3.construire_multime(m3.v,m3.n);
+    return m3;
+
+}
+multime operator -(const multime &m1,const multime &m2)
+{   multime m5;
+    int k=0;
+    m5.n=k;
+    for (int i=0;i<m1.n;i++)
+        m5.v[k++]=m1.v[i];
+    for (int i=0;i<k;i++)
+        for (int j=0;j<m2.n;j++)
+            if (m5.v[i]==m2.v[j])
+                {for (int x=i;x<k;x++)
+                    m5.v[x]=m5.v[x+1];
+                 k--;
+                }
+    m5.n=k;
+    return m5;
+}
+
+multime operator *(const multime &m1,const multime &m2)
+{   multime m6;
+    int k=0;
+    for (int i=0;i<m1.n;i++)
+        for (int j=0;j<m2.n;j++)
+            if (m1.v[i]==m2.v[j]) m6.v[k++]=m1.v[i];
+    m6.n=k;
+    return m6;
+
+}
+ostream & operator << ( ostream &out, const multime &m) {
+         out<<"{";
+         for (int i=0;i<m.n;i++)
+            {out <<m.v[i];
+             if (i<m.n-1)
+             out<<",";}
+         out<<"}";
+         return out;
+      }
+istream & operator >> ( istream &in, multime &m ) {
+         cout<<"n: ";
+         in>>m.n;
+         for (int i=0;i<m.n;i++)
+            in>>m.v[i];
+         return in;
+      }
+class pereche
+{public:
+    int x,y;
+friend class multime_perechi;
+friend ostream & operator<<( ostream & out, const pereche &p );
+friend istream & operator>>( istream  & in, pereche &p );
+};
+ostream & operator << ( ostream &out, const pereche &p) {
+         out<<"Numerele sunt:";
+         out<<p.x<<" "<<p.y;
+         return out;
+      }
+istream & operator >> ( istream &in, pereche &p) {
+         cout<<"Introdu 2 numere:";
+         in>>p.x>>p.y;
+         return in;
+      }
+class multime_perechi
+{public:
+    pereche mul[100];
+    int n;
+    friend ostream & operator<<( ostream & out, const pereche &p );
+    friend istream & operator>>( istream  & in, pereche &p );
+};
+ostream & operator << ( ostream &out, const multime_perechi &p) {
+         out<<"{";
+         for (int i=0;i<p.n;i++)
+            {out<<"("<<p.mul[i].x<<","<<p.mul[i].y<<")";
+            if (i<p.n-1)
+                out<<";";}
+         out<<"}";
+         return out;
+      }
+istream & operator >> ( istream &in, multime_perechi &p) {
+         cout<<"Introdu numarul perechilor:";
+         in>>p.n;
+         for (int i=0;i<p.n;i++)
+            in>>p.mul[i].x>>p.mul[i].y;
+         return in;
+      }
+multime_perechi produs_cartezian(multime m1,multime m2)
+{   int k=0;
+    multime_perechi m;
+    for (int i=0;i<m1.n;i++)
+        for (int j=0;j<m2.n;j++)
+            {m.mul[k].x=m1.v[i];
+             m.mul[k].y=m2.v[j];
+             k++;}
+    m.n=k;
+    return m;
+}
+
+int main()
+{   multime m1,m2,m3,m6,m5;
+    pereche p;
+    multime_perechi m4,m;
+    cin>>m1>>m2;
+    cout<<"1.Adunare 2.Intersectie 3.Diferenta";
+    char a='10';
+    while (a!='4')
+    {cin>>a;
+    switch (a)
+    {case '1':   {m3= operator+(m1,m2);
+                 cout<<m3<<endl;break;}
+    case '2':   {m6=operator*(m1,m2);
+                    cout<<m6<<endl;break;}
+    case '3':   {m5=operator-(m1,m2);
+                    cout<<m5<<endl;break;}
+    }
+    }
+    cout<<endl;
+    cin>>p;
+    cout<<"Perechea este"<<p<<endl;
+    cin>>m4;
+    cout<<"Multimea este:"<<m4;
+    cout<<endl<<"Produsul cartezian este:";
+    m=produs_cartezian(m1,m2);
+    cout<<m;
+
+
+
+    return 0;
+}
